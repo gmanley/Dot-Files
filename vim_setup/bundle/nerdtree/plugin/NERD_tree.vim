@@ -162,11 +162,14 @@ command! -n=0 -bar NERDTreeClose :call s:closeTreeIfOpen()
 command! -n=1 -complete=customlist,s:completeBookmarks -bar NERDTreeFromBookmark call s:initNerdTree('<args>')
 command! -n=0 -bar NERDTreeMirror call s:initNerdTreeMirror()
 command! -n=0 -bar NERDTreeFind call s:findAndRevealPath()
+command! -n=? -complete=dir -bar NERDTreeMirrorToggle call s:mirrorToggle('<args>')
 " SECTION: Auto commands {{{1
 "============================================================
 augroup NERDTree
     "Save the cursor position whenever we close the nerd tree
     exec "autocmd BufWinLeave ". s:NERDTreeBufName ."* call <SID>saveScreenState()"
+    exec "autocmd TabLeave ". s:NERDTreeBufName ."* call <SID>saveScreenState()"
+    exec "autocmd TabEnter ". s:NERDTreeBufName ."* call <SID>syncMirrorTreeScreenState()"
     "cache bookmarks when vim loads
     autocmd VimEnter * call s:Bookmark.CacheBookmarks(0)
 
@@ -194,6 +197,7 @@ function! s:Bookmark.activate()
         if self.validate()
             let n = s:TreeFileNode.New(self.path)
             call n.open()
+            call s:closeTreeIfQuitOnOpen()
         endif
     endif
 endfunction
@@ -2529,7 +2533,7 @@ endfunction
 " FUNCTION: s:findAndRevealPath() {{{2
 function! s:findAndRevealPath()
     try
-        let p = s:Path.New(expand("%"))
+        let p = s:Path.New(expand("%:p"))
     catch /^NERDTree.InvalidArgumentsError/
         call s:echo("no file for the current buffer")
         return
@@ -2671,9 +2675,8 @@ function! s:initNerdTreeInPlace(dir)
 
     call s:renderView()
 endfunction
-" FUNCTION: s:initNerdTreeMirror() {{{2
-function! s:initNerdTreeMirror()
 
+function! s:getNerdTreeBufs()
     "get the names off all the nerd tree buffers
     let treeBufNames = []
     for i in range(1, tabpagenr("$"))
@@ -2694,7 +2697,26 @@ function! s:initNerdTreeMirror()
         let options[i+1 . '. ' . treeRoot.path.str() . '  (buf name: ' . bufName . ')'] = bufName
         let i = i + 1
     endwhile
+    return options
+endfunction
 
+function! s:mirrorToggle(name)
+    if s:treeExistsForTab()
+        call s:toggle(a:name)
+    else
+        let buffers = s:getNerdTreeBufs()
+        if len(keys(buffers)) > 0
+            call s:initNerdTreeMirror()
+            call s:restoreScreenState()
+        else
+            call s:initNerdTree(a:name)
+        endif
+    endif
+endfunction
+
+" FUNCTION: s:initNerdTreeMirror() {{{2
+function! s:initNerdTreeMirror()
+    let options = s:getNerdTreeBufs()
     "work out which tree to mirror, if there is more than 1 then ask the user
     let bufferName = ''
     if len(keys(options)) > 1
@@ -2820,9 +2842,17 @@ function! s:closeTree()
     endif
 
     if winnr("$") != 1
+        if winnr() == s:getTreeWinNum()
+            wincmd p
+            let bufnr = bufnr("")
+            wincmd p
+        else
+            let bufnr = bufnr("")
+        endif
+
         call s:exec(s:getTreeWinNum() . " wincmd w")
         close
-        call s:exec("wincmd p")
+        call s:exec(bufwinnr(bufnr) . " wincmd w")
     else
         close
     endif
@@ -3311,6 +3341,18 @@ function! s:renderViewSavingPosition()
 
     if currentNode != {}
         call currentNode.putCursorHere(0, 0)
+    endif
+endfunction
+
+"FUNCTION: s:syncMirrorTreeScreenState() {{{2
+"
+"Syncs the mirrored tree's screen state after a tab change.
+function! s:syncMirrorTreeScreenState()
+    if s:treeExistsForTab()
+        if s:isTreeOpen() 
+            call s:putCursorInTreeWin()
+            call s:restoreScreenState()
+        endif
     endif
 endfunction
 "FUNCTION: s:restoreScreenState() {{{2
