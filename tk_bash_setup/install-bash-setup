@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+
+set -o errtrace
+set -o errexit
+
+export PS4='+[${BASH_SOURCE}] : ${LINENO} : ${FUNCNAME[0]:+${FUNCNAME[0]}() $ }'
+
+if [[ ${rvm_ignore_rvmrc:-0} -eq 0 ]]; then
+  for file in /etc/rvmrc "$HOME/.rvmrc" ; do
+    if [[ -s "$file" ]] ; then
+      source $file
+    fi
+  done
+fi
+
+rvm_path="${rvm_path:-"$HOME/.rvm"}"
+
+if [[ ! -d "$rvm_path/src" ]] ; then
+  mkdir -p "$rvm_path/src/"
+fi
+
+builtin cd "$rvm_path/src"
+
+if [[ -d ./rvm ]] ; then
+  rm -rf ./rvm/
+fi
+
+git_url="git://github.com/wayneeseguin/rvm.git"
+https_url="https://github.com/wayneeseguin/rvm.git"
+
+if ! git clone "$git_url" ; then
+
+  printf "\nERROR: Cloning from $git_url failed, trying via https now ($https_url).\n"
+
+  if ! git clone "$https_url" ; then
+
+    printf "\nERROR: Cloning from $https_url failed, perhaps your git version does not support the https protocol?  out of ideas... halting.\n"
+
+    exit 1
+
+  fi
+
+fi
+
+builtin cd rvm
+
+chmod +x "$PWD/scripts/install"
+
+exec "$PWD/scripts/install"
+
+exit $?

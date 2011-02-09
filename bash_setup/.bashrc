@@ -32,26 +32,38 @@ shopt -s no_empty_cmd_completion >/dev/null 2>&1
 # Notify of background job completion.
 set -o notify
 
-# Disable automatic core dumps.
-ulimit -S -c 0
-
 # Set default umask
 umask 0022
+
+# Tab complete with sudo as well
+complete -cf sudo
+
+# /etc/bash_completion automatically sources ~/.bash_completion if it exists.
+if [ -f `brew --prefix`/etc/bash_completion ]; then
+  . `brew --prefix`/etc/bash_completion
+fi
+
+if [ -f `brew --prefix`/Library/Contributions/brew_bash_completion.sh ]; then
+  . `brew --prefix`/Library/Contributions/brew_bash_completion.sh
+fi
+
+[[ -r $rvm_path/scripts/completion ]] && . $rvm_path/scripts/completion
 
 # ----------------------------------------------------------------------
 # PATH
 # ----------------------------------------------------------------------
 
 # we want the various sbins on the path along with /usr/local/bin
-PATH="$PATH:/usr/local/sbin:/usr/sbin:/sbin"
+export PATH="/usr/local/Cellar/ccache/3.1.4/libexec:/usr/local/sbin:/usr/sbin:/usr/local/share/npm/bin:/usr/local/Cellar/python/2.7.1/bin:/usr/local/bin:$PATH"
+export NODE_PATH="/usr/local/lib/node"
 
 # I like to put my various aliases in a seperate file
 if [ -f ~/.bash_aliases ]; then
-    . ~/.bash_aliases
+  . ~/.bash_aliases
 fi
 
 # Readline config
-INPUTRC=$HOME/.inputrc
+export JAVA_HOME=/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Home
 
 # ----------------------------------------------------------------------
 # ENVIRONMENT CONFIGURATION
@@ -59,14 +71,14 @@ INPUTRC=$HOME/.inputrc
 
 # detect interactive shell
 case "$-" in
-    *i*) INTERACTIVE=yes ;;
-    *)   unset INTERACTIVE ;;
+  *i*) INTERACTIVE=yes ;;
+  *)   unset INTERACTIVE ;;
 esac
 
 # detect login shell
 case "$0" in
-    -*) LOGIN=yes ;;
-    *)  unset LOGIN ;;
+  -*) LOGIN=yes ;;
+  *)  unset LOGIN ;;
 esac
 
 # enable en_US locale w/ utf-8 encodings if not already configured
@@ -76,8 +88,6 @@ esac
 : ${LC_ALL:="en_US.UTF-8"}
 export LANG LANGUAGE LC_CTYPE LC_ALL
 
-# always use PASSIVE mode ftp
-: ${FTP_PASSIVE:=1}
 export FTP_PASSIVE
 
 # Don't list the same command more then once in history
@@ -87,9 +97,14 @@ HISTCONTROL=ignoreboth
 # PROMPT
 # ----------------------------------------------------------------------
 
+LBLUE="\[\033[0;36m\]"
+GREEN="\[\033[0;32m\]"
+YELLOW="\[\033[0;33m\]"
+PS_CLEAR="\[\033[0m\]"
+
 prompt_color() {
-    PS1="\[\033[0;32m\]\h\[\033[0;36m\] \w\[\033[00m\] ∴ "
-    PS2="\[\]continue \[\]> "
+  PS1="${YELLOW}[${GREEN}\u${YELLOW}][${LBLUE}\w${YELLOW}] ∴ ${PS_CLEAR}"
+  PS2="\[\]continue \[\]> "
 }
 
 # ----------------------------------------------------------------------
@@ -99,21 +114,6 @@ prompt_color() {
 export CLICOLOR=1
 export LSCOLORS=gxgxcxdxbxegedabagacad  # cyan directories
 
-# --------------------------------------------------------------------
-# MISC COMMANDS
-# --------------------------------------------------------------------
-
-# push SSH public key to another box
-push_ssh_cert() {
-    local _host
-    test -f ~/.ssh/id_dsa.pub || ssh-keygen -t dsa
-    for _host in "$@";
-    do
-        echo $_host
-        ssh $_host 'cat >> ~/.ssh/authorized_keys' < ~/.ssh/id_dsa.pub
-    done
-}
-
 # -------------------------------------------------------------------
 # USER SHELL ENVIRONMENT
 # -------------------------------------------------------------------
@@ -122,11 +122,20 @@ push_ssh_cert() {
 test -n "$PS1" &&
 prompt_color
 
+# Change terminal title based on path and host.
+case "$TERM" in
+  xterm*|rxvt*)
+  PROMPT_COMMAND='echo -ne "\033]0;${USER}: ${PWD}\007"'
+  ;;
+  *)
+  ;;
+esac
+
 # -------------------------------------------------------------------
-# MOTD / FORTUNE
+# MOTD
 # -------------------------------------------------------------------
 
 test -n "$INTERACTIVE" -a -n "$LOGIN" && {
-    uname -prs
-    uptime
+  uname -prs
+  uptime
 }
