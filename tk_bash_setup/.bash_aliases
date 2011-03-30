@@ -11,11 +11,8 @@ alias c='clear'
 alias ..='cd ..'
 alias ...='cd ../..'
 alias rbash=". ~/.bash_profile" # reloads bash profile
-alias ebash='mate ~/.bashrc ~/.bash_aliases ~/.inputrc ~/.bash_profile' # Open our bash config files in textmate.
+alias ebash='mate ~/.bashrc ~/.bash_aliases ~/.inputrc ~/.bash_profile ~/.personal_profile' # Open our bash config files in textmate.
 alias ping='ping -c 5' # Limit command to ping the specified server only 5 times.
-alias psc='ps ux' # Good overview of running processes.
-alias fkill='kill -9' # For those hard to kill processes.
-alias recent="ls -lAt | head" # List recently modified files.
 alias grep='grep --color=auto' # Color the returned matches
 # Want to be prompted so we don't do anything stupid.
 alias cp='cp -i'
@@ -38,14 +35,6 @@ alias sg="script/generate"
 alias rdbm="rake db:migrate"
 alias rdbc="rake db:create"
 
-#-----#
-# Git #
-#-----#
-alias gc="git commit -m"
-alias gs="git status"
-alias gp="git push origin master"
-alias gb="git branch"
-#
 #############
 # Functions #
 #############
@@ -61,18 +50,18 @@ function pman () {
 function extract () {
   if [ -f $1 ] ; then
     case $1 in
-      *.tar.bz2)	tar xjf $1	;;
-      *.tar.gz)		tar xzf $1	;;
-      *.bz2)		bunzip2 $1	;;
-      *.rar)    	rar x $1    ;;
-      *.gz)   		gunzip $1	;;
-      *.tar)    	tar xf $1	;;
-      *.tbz2)   	tar xjf $1	;;
-      *.tgz)    	tar xzf $1	;;
-	  *.xz)			tar xJf $1	;;
-      *.zip)    	unzip $1    ;;
-      *.Z)    		uncompress $1 ;;
-      *)      		echo "'$1' cannot be extracted via extract()" ;;
+      *.tar.bz2)  tar xjf $1  ;;
+      *.tar.gz)   tar xzf $1  ;;
+      *.bz2)      bunzip2 $1  ;;
+      *.rar)      rar x $1    ;;
+      *.gz)       gunzip $1   ;;
+      *.tar)      tar xf $1   ;;
+      *.tbz2)     tar xjf $1  ;;
+      *.tgz)      tar xzf $1  ;;
+      *.xz)       tar xJf $1  ;;
+      *.zip)      unzip $1    ;;
+      *.Z)        uncompress $1 ;;
+      *)          echo "'$1' cannot be extracted via extract()" ;;
     esac
   else
     echo "'$1' is not a valid file"
@@ -81,4 +70,15 @@ function extract () {
 
 function hubpatch () {
   curl -k $1.patch | git am
+}
+
+# push SSH public key to another box
+function push_ssh_cert () {
+    local _host
+    test -f ~/.ssh/id_dsa.pub || ssh-keygen -t dsa
+    for _host in "$@";
+    do
+        echo $_host
+        ssh $_host 'cat >> ~/.ssh/authorized_keys' < ~/.ssh/id_dsa.pub
+    done
 }

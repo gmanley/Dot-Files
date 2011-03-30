@@ -54,16 +54,13 @@ fi
 # ----------------------------------------------------------------------
 
 # we want the various sbins on the path along with /usr/local/bin
-export PATH="/usr/local/Cellar/ccache/3.1.4/libexec:/usr/local/Cellar/python/2.7.1/bin:/usr/local/sbin:/usr/sbin:/usr/local/bin:$PATH"
-export NODE_PATH="/usr/local/lib/node"
-export PYTHONPATH=/usr/local/lib/python:$PYTHONPATH
+export PATH="/usr/local/sbin:/usr/sbin:/usr/local/bin:$PATH"
 
 # I like to put my various aliases in a seperate file
 if [ -f ~/.bash_aliases ]; then
   . ~/.bash_aliases
 fi
 
-# Readline config
 export JAVA_HOME=/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Home
 
 # ----------------------------------------------------------------------
