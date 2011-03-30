@@ -54,8 +54,9 @@ fi
 # ----------------------------------------------------------------------
 
 # we want the various sbins on the path along with /usr/local/bin
-export PATH="/usr/local/Cellar/ccache/3.1.4/libexec:/usr/local/sbin:/usr/sbin:/usr/local/share/npm/bin:/usr/local/Cellar/python/2.7.1/bin:/usr/local/bin:$PATH"
+export PATH="/usr/local/Cellar/ccache/3.1.4/libexec:/usr/local/Cellar/python/2.7.1/bin:/usr/local/sbin:/usr/sbin:/usr/local/bin:$PATH"
 export NODE_PATH="/usr/local/lib/node"
+export PYTHONPATH=/usr/local/lib/python:$PYTHONPATH
 
 # I like to put my various aliases in a seperate file
 if [ -f ~/.bash_aliases ]; then
