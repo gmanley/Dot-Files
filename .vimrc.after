@@ -1,0 +1,29 @@
+set background=dark
+colorscheme solarized
+" Enhance command-line completion
+set wildmenu
+" Optimize for fast terminal connections
+set ttyfast
+" Add the g flag to search/replace by default
+set gdefault
+" Use UTF-8 without BOM
+set encoding=utf-8 nobomb
+" Highlight current line
+set cursorline
+" Reset the listchars
+set listchars=""
+" Show “invisible” characters
+set listchars=tab:▸\ ,trail:·,eol:¬,nbsp:_
+" Disable error bells
+set noerrorbells
+" Don’t reset cursor to start of line when moving around.
+set nostartofline
+" Don’t show the intro message when starting vim
+set shortmess=atI
+" Show the current mode
+set showmode
+" Show the filename in the window titlebar
+set title
+" Set hamlc files to haml syntax
+au BufRead,BufNewFile *.hamlc set ft=haml
+
