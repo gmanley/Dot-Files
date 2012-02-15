@@ -7,7 +7,6 @@
 #|---------|
 alias h='history'
 alias rbash=". ~/.bash_profile" # reloads bash profile
-alias ebash='mate ~/.bashrc ~/.bash_aliases ~/.inputrc ~/.bash_profile ~/.personal_profile ~/.rvmrc ~/.gitconfig ~/.gitignore ~/.gemrc ~/.irbrc ~/.rvm/gemsets/*.gems' # Open dotfiles in textmate.
 alias ping='ping -c 5' # Limit command to ping the specified server only 5 times.
 alias grep='grep --color=auto' # Color the returned matches
 # Want to be prompted so we don't do anything stupid.
@@ -16,13 +15,9 @@ alias mv='mv -i'
 alias rm='rm -i'
 alias mkdir='mkdir -p -v' # Make parent directory if it doesn't exist.
 alias trash='rmtrash'
-alias git=hub
-alias npm="npm -g"
-
-#|------|
-#| Ruby |
-#|------|
-alias irb='irb --readline -r irb/completion -rubygems' # use readline, completion and require rubygems in irb
+if [ -f $(which hub) ] ; then
+  alias git=hub
+fi
 
 #############
 # Functions #
@@ -101,11 +96,6 @@ function push_ssh_cert () {
     done
 }
 
-function jump {
-  local si="$IFS";
-  IFS=$'\n';
-  local newDir=$(JUMPPROFILE=1 command jump "$@");
-  cd "$newDir";
-  IFS="$si";
+function fcount () {
+  ls -1 | wc -l
 }
-alias j="jump -a"

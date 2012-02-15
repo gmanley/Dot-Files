@@ -29,6 +29,8 @@ shopt -s hostcomplete >/dev/null 2>&1
 # Don't attempt to tab complete without a preceding command.
 shopt -s no_empty_cmd_completion >/dev/null 2>&1
 
+shopt -s globstar autocd >/dev/null 2>&1
+
 # Notify of background job completion.
 set -o notify
 
@@ -91,9 +93,12 @@ export LANG LANGUAGE LC_CTYPE LC_ALL
 export FTP_PASSIVE
 
 # Don't list the same command more then once in history
-HISTCONTROL=ignoreboth
-HISTFILESIZE=10000
-HISTSIZE=10000
+export HISTCONTROL=ignoreboth
+# Larger bash history (allow 32³ entries; default is 500)
+export HISTSIZE=32768
+export HISTFILESIZE=$HISTSIZE
+# Make some commands not show up in history
+export HISTIGNORE="ls:ls *:cd:cd -:pwd;exit:date:* --help"
 
 # ----------------------------------------------------------------------
 # PROMPT
@@ -142,3 +147,7 @@ test -n "$INTERACTIVE" -a -n "$LOGIN" && {
   uname -prs
   uptime
 }
+PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
+
+# Don’t clear the screen after quitting a manual page
+export MANPAGER="less -X"

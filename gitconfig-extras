@@ -1,13 +1,26 @@
 [apply]
-  whitespace = nowarn
+  whitespace = fix
+[core]
+  quotepath = false
+  excludesfile = ~/.gitignore_global
+  attributesfile = ~/.gitattributes
+  whitespace = fix,space-before-tab,tab-in-indent,trailing-space
 [color]
-  branch = auto
-  diff = auto
-  status = auto
-  ui = true
+  ui = auto
 [color "branch"]
   current = yellow reverse
   local = yellow
   remote = green
+[color "diff"]
+  meta = yellow bold
+  frag = magenta bold
+  old = red bold
+  new = green bold
+[color "status"]
+  added = yellow
+  changed = green
+  untracked = cyan
+[merge]
+  log = true
 [mergetool]
   keepBackup = false

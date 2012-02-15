@@ -1,5 +1,6 @@
-export rvm_make_flags="-j4"
+export rvm_make_flags="-j$(sysctl -n hw.ncpu)" # Set number of build jobs to run concurently depending on number of cores on system.
+export rvm_pretty_print_flag=1 # Turn on pretty colors
+# Explicitly set paths as some versions put stuff directly in the home folder (ie. ~/.bin).
 export rvm_path="$HOME/.rvm"
 export rvm_bin_path="$HOME/.rvm/bin"
 export rvm_man_path="$HOME/.rvm/share"
-export rvm_pretty_print_flag=1
