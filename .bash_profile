@@ -5,3 +5,4 @@ if [ -f "$HOME/.personal_profile" ]; then
 fi
 
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
+[[ -r $rvm_path/scripts/completion ]] && . $rvm_path/scripts/completion # RVM Shell Completion

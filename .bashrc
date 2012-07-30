@@ -28,47 +28,38 @@ shopt -s histappend >/dev/null 2>&1
 shopt -s hostcomplete >/dev/null 2>&1
 # Don't attempt to tab complete without a preceding command.
 shopt -s no_empty_cmd_completion >/dev/null 2>&1
-
 shopt -s globstar autocd >/dev/null 2>&1
-
 # Notify of background job completion.
 set -o notify
-
 # Set default umask
 umask 0022
-
 # Tab complete with sudo as well
 complete -cf sudo
 
 # Homebrew installed bash completion is better
 # /etc/bash_completion automatically sources ~/.bash_completion if it exists.
-if [ -f `brew --prefix`/etc/bash_completion ]; then
-  . `brew --prefix`/etc/bash_completion
-fi
+bash_completion_path="$(brew --prefix)/etc/bash_completion"
+[[ -f $bash_completion_path ]] && . $bash_completion_path
+unset bash_completion_path
 
 # Homebrew Bash Completion
-if [ -f `brew --prefix`/Library/Contributions/brew_bash_completion.sh ]; then
-  . `brew --prefix`/Library/Contributions/brew_bash_completion.sh
-fi
-
-[[ -r $rvm_path/scripts/completion ]] && . $rvm_path/scripts/completion # RVM Shell Completion
+brew_bash_completion_path="$(brew --prefix)/Library/Contributions/brew_bash_completion.sh"
+[[ -f $brew_bash_completion_path ]] && . $brew_bash_completion_path
+unset brew_bash_completion_path
 
 # ----------------------------------------------------------------------
 # PATH
 # ----------------------------------------------------------------------
-
 # we want the various sbins on the path along with /usr/local/bin
-export PATH="/usr/local/sbin:/usr/sbin:/usr/local/bin:$PATH"
+export PATH="/usr/local/bin:/usr/local/sbin:/usr/sbin:$PATH"
+export ACLOCAL_PATH="$(brew --prefix)/share/aclocal"
 
-# I like to put my various aliases in a seperate file
-if [ -f ~/.bash_aliases ]; then
-  . ~/.bash_aliases
-fi
+# Load aliases & functions from seperate file if present
+[[ -f "$HOME/.bash_aliases" ]] && . "$HOME/.bash_aliases"
 
 # ----------------------------------------------------------------------
 # ENVIRONMENT CONFIGURATION
 # ----------------------------------------------------------------------
-
 # detect interactive shell
 case "$-" in
   *i*) INTERACTIVE=yes ;;
@@ -94,11 +85,10 @@ export FTP_PASSIVE
 
 # Don't list the same command more then once in history
 export HISTCONTROL=ignoreboth
+
 # Larger bash history (allow 32³ entries; default is 500)
 export HISTSIZE=32768
 export HISTFILESIZE=$HISTSIZE
-# Make some commands not show up in history
-export HISTIGNORE="ls:ls *:cd:cd -:pwd;exit:date:* --help"
 
 # ----------------------------------------------------------------------
 # PROMPT
@@ -127,8 +117,7 @@ export LSCOLORS=gxgxcxdxbxegedabagacad  # cyan directories
 # -------------------------------------------------------------------
 
 # Use the color prompt by default when interactive
-test -n "$PS1" &&
-prompt_color
+[[ -n "$PS1" ]] && prompt_color
 
 # Change terminal title based on path and host.
 case "$TERM" in
@@ -143,11 +132,14 @@ esac
 # MOTD
 # -------------------------------------------------------------------
 
-test -n "$INTERACTIVE" -a -n "$LOGIN" && {
-  uname -prs
-  uptime
-}
-PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
+# test -n "$INTERACTIVE" -a -n "$LOGIN" && {
+#   uname -prs
+#   uptime
+# }
 
 # Don’t clear the screen after quitting a manual page
 export MANPAGER="less -X"
+
+export EDITOR='mate'
+
+PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting

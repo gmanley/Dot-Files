@@ -1,5 +1,4 @@
-set background=dark
-colorscheme solarized
+colorscheme twilight256
 " Enhance command-line completion
 set wildmenu
 " Optimize for fast terminal connections
@@ -9,7 +8,7 @@ set gdefault
 " Use UTF-8 without BOM
 set encoding=utf-8 nobomb
 " Highlight current line
-set cursorline
+" set cursorline
 " Reset the listchars
 set listchars=""
 " Show “invisible” characters
@@ -26,4 +25,9 @@ set showmode
 set title
 " Set hamlc files to haml syntax
 au BufRead,BufNewFile *.hamlc set ft=haml
-
+" Make gist-vim detect filetype from the filename
+let g:gist_detect_filetype = 1
+" Make gist-vim open browser after the post
+let g:gist_open_browser_after_post = 1
+au BufRead,BufNewFile *.bbcode set ft=bbcode
+set mouse=a

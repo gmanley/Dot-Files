@@ -5,23 +5,28 @@
 #|---------|
 #| General |
 #|---------|
+alias lsports='lsof -i -P | grep LISTEN'
 alias h='history'
+alias hgrep='history | grep -i'
 alias rbash=". ~/.bash_profile" # reloads bash profile
 alias ping='ping -c 5' # Limit command to ping the specified server only 5 times.
-alias grep='grep --color=auto' # Color the returned matches
-# Want to be prompted so we don't do anything stupid.
-alias cp='cp -i'
-alias mv='mv -i'
-alias rm='rm -i'
+alias grep='grep -i --color=auto' # Color the returned matches
 alias mkdir='mkdir -p -v' # Make parent directory if it doesn't exist.
 alias trash='rmtrash'
-if [ -f $(which hub) ] ; then
-  alias git=hub
-fi
+[[ -f $(which hub) ]] && alias git=hub
+alias mvim="mvim -p"
+alias mate='mate -r'
+alias curl="curl -b <(sqlite3 -separator $'\t' ~/Library/Application\ Support/Google/Chrome/Default/Cookies \"select host_key, 'TRUE','/', 'FALSE', expires_utc, name, value from cookies\")"
 
 #############
 # Functions #
 #############
+
+function mkrvmrc () {
+  local latest_ruby="$(rvm list strings | tail -n -1)"
+  echo "rvm $latest_ruby@$(basename $PWD) --create" > .rvmrc
+  . .rvmrc
+}
 
 function showdiff () {
   tab=$'\t'
@@ -62,23 +67,21 @@ function extract () {
 }
 
 function mdiff () {
-  if [[ -f $1 && -f $2 ]] ; then
+  if [[ -f $1 && -f $2 ]]; then
     file_1="/tmp/file_1.txt"
     file_2="/tmp/file_2.txt"
-    mediainfo "$1" > "$file_1"
-    mediainfo "$2" > "$file_2"
-    ksdiff "$file_1" "$file_2"
+    /usr/local/bin/mediainfo "$1" > "$file_1"
+    /usr/local/bin/mediainfo "$2" > "$file_2"
+    /usr/local/bin/ksdiff "$file_1" "$file_2"
   fi
 }
 
 function mtube (){
-  args="$*"
-  mplayer -prefer-ipv4  $(youtube-dl -g "$1")
+  mplayer -prefer-ipv4 $(youtube-dl -g "$1")
 }
 
 function xcode () {
-  path=$1
-  open "$path/"*.xcodeproj
+  open "$1/*.xcodeproj"
 }
 
 function hubpatch () {
@@ -88,11 +91,11 @@ function hubpatch () {
 # push SSH public key to another box
 function push_ssh_cert () {
     local _host
-    test -f ~/.ssh/id_dsa.pub || ssh-keygen -t dsa
+    test -f ~/.ssh/id_rsa.pub || ssh-keygen -t dsa
     for _host in "$@";
     do
         echo $_host
-        ssh $_host 'cat >> ~/.ssh/authorized_keys' < ~/.ssh/id_dsa.pub
+        ssh $_host 'cat >> ~/.ssh/authorized_keys' < ~/.ssh/id_rsa.pub
     done
 }
 
