@@ -36,22 +36,24 @@ umask 0022
 # Tab complete with sudo as well
 complete -cf sudo
 
-# Homebrew installed bash completion is better
-# /etc/bash_completion automatically sources ~/.bash_completion if it exists.
-bash_completion_path="$(brew --prefix)/etc/bash_completion"
-[[ -f $bash_completion_path ]] && . $bash_completion_path
-unset bash_completion_path
+function setup_bash_completion () {
+  # Homebrew installed bash completion is better
+  # /etc/bash_completion automatically sources ~/.bash_completion if it exists.
+  local bash_completion_path="$(brew --prefix)/etc/bash_completion"
+  [[ -f $bash_completion_path ]] && . $bash_completion_path
 
-# Homebrew Bash Completion
-brew_bash_completion_path="$(brew --prefix)/Library/Contributions/brew_bash_completion.sh"
-[[ -f $brew_bash_completion_path ]] && . $brew_bash_completion_path
-unset brew_bash_completion_path
+  # # Homebrew Bash Completion
+  local brew_bash_completion_path="$(brew --prefix)/Library/Contributions/brew_bash_completion.sh"
+  [[ -f $brew_bash_completion_path ]] && . $brew_bash_completion_path
+}
+
+setup_bash_completion
 
 # ----------------------------------------------------------------------
 # PATH
 # ----------------------------------------------------------------------
 # we want the various sbins on the path along with /usr/local/bin
-export PATH="/usr/local/bin:/usr/local/sbin:/usr/sbin:$PATH"
+export PATH="/usr/local/bin:/usr/local/share/npm/bin:/usr/local/sbin:/usr/sbin:$PATH"
 export ACLOCAL_PATH="$(brew --prefix)/share/aclocal"
 
 # Load aliases & functions from seperate file if present
@@ -93,15 +95,15 @@ export HISTFILESIZE=$HISTSIZE
 # ----------------------------------------------------------------------
 # PROMPT
 # ----------------------------------------------------------------------
-
 LBLUE="\[\e[0;36m\]"
 GREEN="\[\e[0;32m\]"
 YELLOW="\[\e[0;33m\]"
 VIOLAT="\[\e[0;94m\]"
+MAGENTA="\[\e[0;35m\]"
 PS_CLEAR="\[\e[0m\]"
 
 prompt_color() {
-  PS1="${YELLOW}[${GREEN}\u${LBLUE}@${VIOLAT}\h${YELLOW}][${LBLUE}\w${YELLOW}] ∴${PS_CLEAR} "
+  PS1="${YELLOW}[${GREEN}\u${LBLUE}@${VIOLAT}\h${YELLOW}][${LBLUE}\w${MAGENTA}\$(__git_ps1)${YELLOW}] ∴${PS_CLEAR} "
   PS2="\[\]continue \[\]> "
 }
 
@@ -140,6 +142,9 @@ esac
 # Don’t clear the screen after quitting a manual page
 export MANPAGER="less -X"
 
-export EDITOR='mate'
+export EDITOR='subl'
 
 PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
+
+### Added by the Heroku Toolbelt
+export PATH="/usr/local/heroku/bin:$PATH"

@@ -16,11 +16,38 @@ alias trash='rmtrash'
 [[ -f $(which hub) ]] && alias git=hub
 alias mvim="mvim -p"
 alias mate='mate -r'
-alias curl="curl -b <(sqlite3 -separator $'\t' ~/Library/Application\ Support/Google/Chrome/Default/Cookies \"select host_key, 'TRUE','/', 'FALSE', expires_utc, name, value from cookies\")"
+alias pcurl="curl -b <(sqlite3 -separator $'\t' ~/Library/Application\ Support/Google/Chrome/Default/Cookies \"select host_key, 'TRUE','/', 'FALSE', expires_utc, name, value from cookies\")"
 
 #############
 # Functions #
 #############
+
+function apachectl () {
+  local httpd_launch_daemon='/System/Library/LaunchDaemons/org.apache.httpd.plist'
+  case $1 in
+    'restart') sudo launchctl unload -w $httpd_launch_daemon
+               sudo launchctl load -w $httpd_launch_daemon ;;
+    'stop') sudo launchctl unload -w $httpd_launch_daemon ;;
+    'start') sudo launchctl load -w $httpd_launch_daemon ;;
+  esac
+}
+
+function gems_path () {
+  local gems_base_dir="$GEM_HOME/gems"
+  if [ -n $1 ]; then
+    echo "$gems_base_dir/$1*"
+  else
+    echo "$gems_base_dir"
+  fi
+}
+
+function subl_gems () {
+  subl $(gems_path $1)
+}
+
+function digga () {
+  dig +nocmd "$1" any +multiline +noall +answer
+}
 
 function mkrvmrc () {
   local latest_ruby="$(rvm list strings | tail -n -1)"
@@ -81,7 +108,7 @@ function mtube (){
 }
 
 function xcode () {
-  open "$1/*.xcodeproj"
+  open $1/*.xcodeproj
 }
 
 function hubpatch () {
