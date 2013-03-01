@@ -97,9 +97,9 @@ function mdiff () {
   if [[ -f $1 && -f $2 ]]; then
     file_1="/tmp/file_1.txt"
     file_2="/tmp/file_2.txt"
-    /usr/local/bin/mediainfo "$1" > "$file_1"
-    /usr/local/bin/mediainfo "$2" > "$file_2"
-    /usr/local/bin/ksdiff "$file_1" "$file_2"
+    mediainfo "$1" > "$file_1"
+    mediainfo "$2" > "$file_2"
+    ksdiff "$file_1" "$file_2"
   fi
 }
 
@@ -129,3 +129,5 @@ function push_ssh_cert () {
 function fcount () {
   ls -1 | wc -l
 }
+
+alias ec2mosh="mosh -ssh='ssh -i ~/.ssh/Gray.pem'"

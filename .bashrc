@@ -36,18 +36,24 @@ umask 0022
 # Tab complete with sudo as well
 complete -cf sudo
 
-function setup_bash_completion () {
+function setup () {
+  if [ -f $(brew --prefix)/etc/bash_completion ]; then
+    . $(brew --prefix)/etc/bash_completion
+  fi
+
   # Homebrew installed bash completion is better
   # /etc/bash_completion automatically sources ~/.bash_completion if it exists.
-  local bash_completion_path="$(brew --prefix)/etc/bash_completion"
-  [[ -f $bash_completion_path ]] && . $bash_completion_path
+  local git_prompt_path="$(brew --prefix)/etc/bash_completion.d/git-prompt.sh"
+  [[ -f $git_prompt_path ]] && . $git_prompt_path
+
+
 
   # # Homebrew Bash Completion
   local brew_bash_completion_path="$(brew --prefix)/Library/Contributions/brew_bash_completion.sh"
   [[ -f $brew_bash_completion_path ]] && . $brew_bash_completion_path
 }
 
-setup_bash_completion
+setup && unset setup
 
 # ----------------------------------------------------------------------
 # PATH
