@@ -1,4 +1,1 @@
-rvm_make_flags="-j$(sysctl -n hw.ncpu)" # Set number of build jobs to run concurently depending on number of cores on system.
-rvm_pretty_print_flag=1 # Turn on pretty colors
-rvm_path="$HOME/.rvm" # Explicitly set paths as some versions put stuff directly in the home folder (ie. ~/.bin).
-rvm_auto_reload_flag=1
+rvm_project_rvmrc_default=1

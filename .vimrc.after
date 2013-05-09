@@ -1,4 +1,5 @@
-colorscheme twilight256
+set background=dark
+colorscheme jellybeans+
 " Enhance command-line completion
 set wildmenu
 " Optimize for fast terminal connections

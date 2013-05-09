@@ -41,19 +41,26 @@ function setup () {
     . $(brew --prefix)/etc/bash_completion
   fi
 
+  # if [ -d $(brew --prefix)/etc/bash_completion.d ]; then
+  #   . $(brew --prefix)/etc/bash_completion.d/*
+  # fi
+
   # Homebrew installed bash completion is better
   # /etc/bash_completion automatically sources ~/.bash_completion if it exists.
   local git_prompt_path="$(brew --prefix)/etc/bash_completion.d/git-prompt.sh"
   [[ -f $git_prompt_path ]] && . $git_prompt_path
 
 
-
   # # Homebrew Bash Completion
   local brew_bash_completion_path="$(brew --prefix)/Library/Contributions/brew_bash_completion.sh"
   [[ -f $brew_bash_completion_path ]] && . $brew_bash_completion_path
+
+  [[ -s `brew --prefix`/etc/autojump.sh ]] && . `brew --prefix`/etc/autojump.sh
 }
 
 setup && unset setup
+
+export AUTOJUMP_KEEP_SYMLINKS=1
 
 # ----------------------------------------------------------------------
 # PATH
@@ -148,7 +155,9 @@ esac
 # Don’t clear the screen after quitting a manual page
 export MANPAGER="less -X"
 
-export EDITOR='subl'
+export EDITOR='subl -w'
+
+export PYTHONPATH="/usr/local/lib/python2.7/site-packages:$PYTHONPATH"
 
 PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
 
