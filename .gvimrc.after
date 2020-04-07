@@ -1,5 +1,0 @@
-set guioptions-=T
-set guifont=PragmataPro:h14
-" Turn off error bells
-set vb t_vb=
-colorscheme molokai

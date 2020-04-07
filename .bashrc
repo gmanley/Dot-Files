@@ -50,7 +50,6 @@ function setup () {
   local git_prompt_path="$(brew --prefix)/etc/bash_completion.d/git-prompt.sh"
   [[ -f $git_prompt_path ]] && . $git_prompt_path
 
-
   # # Homebrew Bash Completion
   local brew_bash_completion_path="$(brew --prefix)/Library/Contributions/brew_bash_completion.sh"
   [[ -f $brew_bash_completion_path ]] && . $brew_bash_completion_path
@@ -159,7 +158,7 @@ export EDITOR='subl -w'
 
 export PYTHONPATH="/usr/local/lib/python2.7/site-packages:$PYTHONPATH"
 
-PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
+export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 
-### Added by the Heroku Toolbelt
-export PATH="/usr/local/heroku/bin:$PATH"
+# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+export PATH="$PATH:$HOME/.rvm/bin"

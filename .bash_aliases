@@ -17,6 +17,7 @@ alias trash='rmtrash'
 alias mvim="mvim -p"
 alias mate='mate -r'
 alias pcurl="curl -b <(sqlite3 -separator $'\t' ~/Library/Application\ Support/Google/Chrome/Default/Cookies \"select host_key, 'TRUE','/', 'FALSE', expires_utc, name, value from cookies\")"
+alias be='bundle exec'
 
 #|-----|
 #| Git |
@@ -119,7 +120,7 @@ function mdiff () {
     file_2="/tmp/file_2.txt"
     mediainfo "$1" > "$file_1"
     mediainfo "$2" > "$file_2"
-    ksdiff "$file_1" "$file_2"
+    opendiff "$file_1" "$file_2"
   fi
 }
 
@@ -151,3 +152,4 @@ function fcount () {
 }
 
 alias ec2mosh="mosh -ssh='ssh -i ~/.ssh/Gray.pem'"
+
